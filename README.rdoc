@@ -1,0 +1,5 @@
+= puppet-stdlib module
+
+{<img src='https://codex.cegeka.be/jenkins/job/puppet-stdlib/badge/icon' />}[https://codex.cegeka.be/jenkins/job/puppet-stdlib/]
+
+This is the stdlib module.
