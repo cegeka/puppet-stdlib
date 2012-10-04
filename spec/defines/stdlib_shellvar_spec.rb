@@ -3,17 +3,17 @@ require 'spec_helper'
 describe 'stdlib::shellvar', :type => :define do
   let(:title) { 'test' }
 
-  context 'with file => \'conf/test.properties\'' do
+  context 'with path => \'test.properties\'' do
     let(:params) {
       {
-        :file => 'conf/test.properties',
-        :key  => 'bar'
+        :path     => 'test.properties',
+        :variable => 'bar'
       }
     }
 
     it {
       expect { subject }.to raise_error(
-        Puppet::Error, /parameter file must be an absolute path/
+        Puppet::Error, /parameter path must be an absolute path/
       )
     }
   end
@@ -21,9 +21,9 @@ describe 'stdlib::shellvar', :type => :define do
   context 'with ensure => installed' do
     let(:params) {
       {
-        :file   => '/tmp/foo',
-        :key    => 'bar',
-        :ensure => 'installed'
+        :path     => '/tmp/foo',
+        :variable => 'bar',
+        :ensure   => 'installed'
       }
     }
 
@@ -37,9 +37,9 @@ describe 'stdlib::shellvar', :type => :define do
   context 'with ensure => absent' do
     let(:params) {
       {
-        :file   => '/tmp/foo',
-        :key    => 'bar',
-        :ensure => 'absent'
+        :path     => '/tmp/foo',
+        :variable => 'bar',
+        :ensure   => 'absent'
       }
     }
 
@@ -59,8 +59,8 @@ describe 'stdlib::shellvar', :type => :define do
   context 'without optional parameters' do
     let(:params) {
       {
-        :file  => '/tmp/foo',
-        :key   => 'bar',
+        :path     => '/tmp/foo',
+        :variable => 'bar',
       }
     }
 
@@ -80,9 +80,9 @@ describe 'stdlib::shellvar', :type => :define do
   context 'with value => \'baz\'' do
     let(:params) {
       {
-        :file  => '/tmp/foo',
-        :key   => 'bar',
-        :value => 'baz'
+        :path     => '/tmp/foo',
+        :variable => 'bar',
+        :value    => 'baz'
       }
     }
 

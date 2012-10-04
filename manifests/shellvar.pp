@@ -5,22 +5,22 @@
 #
 # === Parameters:
 #
-# [*file*] The file containing the shell variables. This should
-#          be an absolute path.
+# [*path*] The path of the file containing the shell variables.
+#          This must be an absolute path.
 #          - Required: yes
 #          - Type: String
 #
-# [*key*] The variable to manipulate.
+# [*variable*] The variable to manipulate.
 #              - Required: yes
 #              - Type: String
 #
-# [*value*] The value to be assigned to the key.
+# [*value*] The value to be assigned to the variable.
 #           - Required: no
 #           - Default: ''
 #           - Type: String
 #
-# [*ensure*] The desired state for the key/value pair. A value of
-#            absent removes the shell variable from the file, a
+# [*ensure*] The desired state for the variable/value pair. A value
+#            of absent removes the shell variable from the file, a
 #            declaration of stdlib::shellvar without the optional
 #            parameters creates an empty shell variable.
 #            - Required: no
@@ -29,37 +29,37 @@
 #
 # === Sample Usage:
 #
-# Adding an extra shell-type key/value pair:
+# Adding an extra shell-type variable/value pair:
 #
 #   stdlib::shellvar { 'Puppet agent log':
-#     file  => '/etc/sysconfig/puppet',
-#     key   => 'PUPPET_LOG',
-#     value => '/var/log/puppet/puppet.log'
+#     path     => '/etc/sysconfig/puppet',
+#     variable => 'PUPPET_LOG',
+#     value    => '/var/log/puppet/puppet.log'
 #   }
 #
-# Removing a shell-type key/value pair:
+# Removing a shell-type variable/value pair:
 #
 #   stdlib::shellvar { 'Remove grub forcelba':
-#     file   => '/etc/sysconfig/grub',
-#     key    => 'forcelba',
-#     ensure => absent
+#     path     => '/etc/sysconfig/grub',
+#     variable => 'forcelba',
+#     ensure   => absent
 #   }
 #
-# Clearing the value of a shell-type key/value pair:
+# Clearing the value of a shell-type variable/value pair:
 #
 #   stdlib::shellvar { 'Clear extra iptables modules':
-#     file   => '/etc/sysconfig/iptables-config',
-#     key    => 'IPTABLES_MODULES'
+#     path     => '/etc/sysconfig/iptables-config',
+#     variable => 'IPTABLES_MODULES'
 #   }
 #
 define stdlib::shellvar(
-                          $file,
-                          $key,
+                          $path,
+                          $variable,
                           $value = '',
                           $ensure = present
                         ) {
-  if $file !~ /^\/.*$/ {
-    fail("Stdlib::Shellvar[${title}]: parameter file must be an absolute path")
+  if $path !~ /^\/.*$/ {
+    fail("Stdlib::Shellvar[${title}]: parameter path must be an absolute path")
   }
 
   case $ensure {
@@ -67,20 +67,20 @@ define stdlib::shellvar(
       {
         augeas { $title :
           lens    => 'Shellvars.lns',
-          incl    => $file,
-          context => "/files${file}",
-          onlyif  => "get ${key} != '${value}'",
-          changes => ["set ${key} '${value}'" ]
+          incl    => $path,
+          context => "/files${path}",
+          onlyif  => "get ${variable} != '${value}'",
+          changes => ["set ${variable} '${value}'" ]
         }
       }
     absent:
       {
         augeas { $title :
           lens    => 'Shellvars.lns',
-          incl    => $file,
-          context => "/files${file}",
-          onlyif  => "match ${key} size > 0",
-          changes => [ "rm ${key}" ]
+          incl    => $path,
+          context => "/files${path}",
+          onlyif  => "match ${variable} size > 0",
+          changes => [ "rm ${variable}" ]
         }
       }
     default:
