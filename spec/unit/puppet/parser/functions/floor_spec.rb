@@ -9,7 +9,7 @@ describe "the floor function" do
     Puppet::Parser::Functions.function("floor").should == "function_floor"
   end
 
-  it "should raise a ParseError if there is less than 1 arguments" do
+  it "should raise a ParseError if there is less than 1 argument" do
     lambda { scope.function_floor([]) }.should( raise_error(Puppet::ParseError, /Wrong number of arguments/))
   end
 
