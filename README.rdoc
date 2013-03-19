@@ -6,9 +6,8 @@ This is the stdlib module.
 
 == Copyright
 
-Copyright (C) 2012 Cegeka NV
-Copyright (C) 2011 Puppet Labs Inc
-Copyright (C) 2011 Krzysztof Wilczynski
+* Copyright (C) 2012 Cegeka NV
+* Copyright (C) 2011 Puppet Labs Inc
 
 == License
 
