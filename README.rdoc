@@ -3,3 +3,13 @@
 {<img src='https://codex.cegeka.be/jenkins/job/puppet-stdlib/badge/icon' />}[https://codex.cegeka.be/jenkins/job/puppet-stdlib/]
 
 This is the stdlib module.
+
+== Copyright
+
+Copyright (C) 2012 Cegeka NV
+Copyright (C) 2011 Puppet Labs Inc
+Copyright (C) 2011 Krzysztof Wilczynski
+
+== License
+
+Puppet-stdlib is licensed under the Apache License, Version 2.0. See the LICENSE file for more details.
