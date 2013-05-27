@@ -12,18 +12,28 @@ describe "the is_integer function" do
     lambda { scope.function_is_integer([]) }.should( raise_error(Puppet::ParseError))
   end
 
-  it "should return true if an integer" do
+  it "should return true if an integer is passed" do
     result = scope.function_is_integer(["3"])
     result.should(eq(true))
   end
 
-  it "should return false if a float" do
+  it "should return true if an integer is created from an arithmetical operation" do
+    result = scope.function_is_integer([3*2])
+    result.should(eq(true))
+  end
+
+  it "should return false if a float is passed" do
     result = scope.function_is_integer(["3.2"])
     result.should(eq(false))
   end
 
-  it "should return false if a string" do
+  it "should return false if a string is passed" do
     result = scope.function_is_integer(["asdf"])
+    result.should(eq(false))
+  end
+
+  it "should return false if a boolean is passed" do
+    result = scope.function_is_integer([true])
     result.should(eq(false))
   end
 end
