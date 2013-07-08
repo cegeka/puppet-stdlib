@@ -20,7 +20,7 @@ if version[0] >= 3 or (version[0] == 2 and version[1] == 7 and version[2] >= 4)
         Puppet.initialize_settings
       end
 
-      if FileTest.exists?(Puppet.settings[:resourcefile])
+      if File.exist?(Puppet.settings[:resourcefile])
         File.read(Puppet.settings[:resourcefile]).each.inject(0) {|n, _| n + 1}
       end
     end
