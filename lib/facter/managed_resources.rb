@@ -9,14 +9,16 @@
 # This file is available since commit 7a39ca7, solving issue #8667,
 # which is included in version 2.7.4.
 
-require 'puppet'
-
 version = Facter.value(:puppetversion).split('.').map { |v| v.to_i }
 
 if version[0] >= 3 or (version[0] == 2 and version[1] == 7 and version[2] >= 4)
   Facter.add(:managed_resources) do
     setcode do
-      if version[0] >= 3
+      require 'puppet'
+
+      begin
+        Puppet.settings[:resourcefile]
+      rescue Puppet::Settings::InterpolationError
         Puppet.initialize_settings
       end
 
