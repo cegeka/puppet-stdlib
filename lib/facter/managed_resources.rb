@@ -17,13 +17,14 @@ if version[0] >= 3 or (version[0] == 2 and version[1] == 7 and version[2] >= 4)
       require 'puppet'
 
       begin
-        Puppet.settings[:resourcefile]
+        resourcefile = Puppet.settings[:resourcefile]
       rescue Puppet::Settings::InterpolationError
         Puppet.initialize_settings
+        retry
       end
 
-      if File.exist?(Puppet.settings[:resourcefile])
-        File.read(Puppet.settings[:resourcefile]).each.inject(0) {|n, _| n + 1}
+      if File.exist?(resourcefile)
+        File.read(resourcefile).each.inject(0) { |n, _| n + 1 }
       end
     end
   end
