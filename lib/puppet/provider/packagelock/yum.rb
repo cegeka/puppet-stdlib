@@ -23,16 +23,16 @@ Puppet::Type.type(:packagelock).provide(:yum) do
 
   def self.instances
     if (Facter[:operatingsystemrelease].value =~ /^5.*/)
-      locklist = File.read(LOCKLIST).split("\n").reject do |line|
-	line =~ /^\s*#.*/ or line =~ /^\s*$/
-      end
+      locks = File.read(LOCKLIST)
     else
       begin
-        locklist = yum('versionlock', '-q', 'list').split("\n")
+        locks = yum('versionlock', '-q', 'list')
       rescue Puppet::ExecutionFailure => e
         fail("YUM Versionlock is not enabled")
       end
     end
+
+    locklist = locks.split("\n").select { |l| l =~ /^[0-9]+:.*\.\*$/ }
 
     locklist.collect do |lock|
       pkg = lock_to_pkg(lock)
