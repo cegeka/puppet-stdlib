@@ -4,6 +4,10 @@
 
 This is the stdlib module.
 
+== Required Gems
+
+* unix-crypt
+
 == Copyright
 
 * Copyright (C) 2012 Cegeka NV
