@@ -4,9 +4,9 @@
 
 This is the stdlib module.
 
-== Requirements
+== Required Gems
 
-* unix-crypt gem
+* unix-crypt
 
 == Copyright
 
