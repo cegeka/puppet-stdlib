@@ -13,12 +13,6 @@ Puppet::Type.type(:packagelock).provide(:yum) do
 
   confine :osfamily => :redhat
 
-  confine :true => begin
-    if File.exist?(LOCKCONF)
-      File.readlines(LOCKCONF).find { |line| line =~ /^\s*enabled\s*=\s1/ }
-    end
-  end
-
   defaultfor :osfamily => :redhat
 
   def self.instances
