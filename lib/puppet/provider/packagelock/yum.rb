@@ -13,11 +13,17 @@ Puppet::Type.type(:packagelock).provide(:yum) do
 
   confine :osfamily => :redhat
 
+  confine :exists   => LOCKCONF
+
   defaultfor :osfamily => :redhat
 
   def self.instances
     if (Facter[:operatingsystemrelease].value =~ /^5.*/)
-      locks = File.read(LOCKLIST)
+      if File.file?(LOCKLIST)
+        locks = File.read(LOCKLIST)
+      else
+        locks = ''
+      end
     else
       begin
         locks = yum('versionlock', '-q', 'list')
