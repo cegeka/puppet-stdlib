@@ -29,7 +29,7 @@ describe packagelock do
     @class.attrtype(:ensure).should == :property
   end
 
-  context "" do
+  context "with a corresponding package resource" do
     before do
       @pkg_foo = Puppet::Type.type(:package).new(:name => 'foo', :ensure => :present)
       @catalog = Puppet::Resource::Catalog.new
@@ -45,7 +45,7 @@ describe packagelock do
       @req.size.should == 1
     end
 
-    it "with a package resource as source" do
+    it "with the package resource as source" do
       @req[0].source.eql? @pkg_foo
     end
 
