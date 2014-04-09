@@ -7,7 +7,11 @@ Facter.add(:openssl_version) do
   setcode do
     case Facter.value(:osfamily)
     when /RedHat/
-     Facter::Util::Resolution.exec('rpm -q --queryformat "%{VERSION}" openssl')
+      if Facter.value(:architecture) == 'x86_64'
+        Facter::Util::Resolution.exec('rpm -q --queryformat "%{VERSION}" openssl.x86_64')
+      else
+        Facter::Util::Resolution.exec('rpm -q --queryformat "%{VERSION}" openssl')
+      end
     end
   end
 end
