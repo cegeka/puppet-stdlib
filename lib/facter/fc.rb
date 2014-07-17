@@ -13,6 +13,15 @@ if File.directory?(fc_host)
                 wwpn.join(":")
             end
         end
+
+        Facter.add("speed_" + adapter[/host\d+/]) do
+            confine :kernel => :linux
+            setcode do
+                file = File.new(adapter + "/speed")
+                speed = file.readlines[0]
+                speed
+            end
+        end
     end
 
     Facter.add(:fc_interfaces) do
