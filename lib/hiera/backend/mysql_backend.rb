@@ -1,6 +1,7 @@
 # Class Mysql_backend
 # Description: MySQL back end to Hiera.
 # Author: Craig Dunn <craig@craigdunn.org>
+# Contributor: Fabian Dammekens <fabian@dammekens.be>
 #
 class Hiera
     module Backend
