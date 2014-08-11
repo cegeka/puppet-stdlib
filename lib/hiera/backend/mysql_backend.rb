@@ -10,7 +10,6 @@ class Hiera
                 begin
                   require 'mysql'
                   require 'yaml'
-                  require 'pp'
                 rescue LoadError
                   require 'rubygems'
                   require 'mysql'
