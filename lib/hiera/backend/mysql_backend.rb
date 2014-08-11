@@ -1,7 +1,6 @@
 # Class Mysql_backend
 # Description: MySQL back end to Hiera.
 # Author: Craig Dunn <craig@craigdunn.org>
-# Contributor: Fabian Dammekens <fabian@dammekens.be>
 #
 class Hiera
     module Backend
@@ -9,10 +8,12 @@ class Hiera
             def initialize
                 begin
                   require 'mysql'
+                  require 'yaml'
                   require 'pp'
                 rescue LoadError
                   require 'rubygems'
                   require 'mysql'
+                  require 'yaml'
                 end
 
                 Hiera.debug("mysql_backend initialized")
@@ -55,7 +56,7 @@ class Hiera
 
                 end
               Hiera.debug("Returning type: #{answer.class}")
-              answer
+              return answer
             end
 
             def query (sql,resolution_type)
@@ -87,8 +88,14 @@ class Hiera
                   Hiera.debug("# Found Mysql variable: " + variable + " value: " + value)
                   case resolution_type
                     when :hash
-                      # I don't expect multiple results returned because all values will be inside the result (hash)
-                      data = eval(value)
+                      begin
+                        newdata = YAML.load(value)
+                        data.merge!(newdata)
+                      rescue
+                        Hiera.debug("# Mysql Query returned invalid YAML")
+                        Hiera.debug("\n" + value.class)
+                        Hiera.debug("\n" + value)
+                      end
                     else
                       data << value
                   end
