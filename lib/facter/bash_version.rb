@@ -1,6 +1,6 @@
 # Fact: bash_version
 #
-# Purpose: Returns the version of the OpenSSL package currently installed on a node.
+# Purpose: Returns the version of the bash package currently installed on a node.
 
 Facter.add(:bash_version) do
   confine :kernel => "Linux"
