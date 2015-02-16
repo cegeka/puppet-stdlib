@@ -7,7 +7,7 @@ Facter.add(:fs_size_var) do
   setcode do
     case Facter.value(:osfamily)
     when /RedHat/
-      Facter::Util::Resolution.exec("lsblk | grep var | awk '{print $4}'")
+      Facter::Util::Resolution.exec("lsblk -o MOUNTPOINT,TYPE,SIZE | grep '/var' | awk '{print $3}'")
     end
   end
 end
