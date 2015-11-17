@@ -39,4 +39,3 @@ Would result in: "a,b,c"
 end
 
 # vim: set ts=2 sw=2 et :
-

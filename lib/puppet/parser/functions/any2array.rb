@@ -7,7 +7,7 @@ module Puppet::Parser::Functions
 This converts any object to an array containing that object. Empty argument
 lists are converted to an empty array. Arrays are left untouched. Hashes are
 converted to arrays of alternating keys and values.
-EOS
+    EOS
   ) do |arguments|
 
     if arguments.empty?
