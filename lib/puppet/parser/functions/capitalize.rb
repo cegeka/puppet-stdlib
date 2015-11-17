@@ -1,21 +1,20 @@
 #
-# capitalize.rb
+#  capitalize.rb
 #
 
 module Puppet::Parser::Functions
   newfunction(:capitalize, :type => :rvalue, :doc => <<-EOS
-Capitalizes the first letter of a string or array of strings.
-Requires either a single string or an array as an input.
-EOS
+    Capitalizes the first letter of a string or array of strings.
+    Requires either a single string or an array as an input.
+    EOS
   ) do |arguments|
 
     raise(Puppet::ParseError, "capitalize(): Wrong number of arguments " +
       "given (#{arguments.size} for 1)") if arguments.size < 1
 
     value = arguments[0]
-    klass = value.class
 
-    unless [Array, String].include?(klass)
+    unless value.is_a?(Array) || value.is_a?(String)
       raise(Puppet::ParseError, 'capitalize(): Requires either ' +
         'array or string to work with')
     end
