@@ -5,7 +5,7 @@
 module Puppet::Parser::Functions
   newfunction(:is_mac_address, :type => :rvalue, :doc => <<-EOS
 Returns true if the string passed to this function is a valid mac address.
-EOS
+    EOS
   ) do |arguments|
 
     if (arguments.size != 1) then
@@ -15,7 +15,7 @@ EOS
 
     mac = arguments[0]
 
-    if /^[a-fA-F0-9]{1,2}:[a-fA-F0-9]{1,2}:[a-fA-F0-9]{1,2}:[a-fA-F0-9]{1,2}:[a-fA-F0-9]{1,2}:[a-fA-F0-9]{1,2}$/.match(mac) then
+    if /^[a-f0-9]{1,2}(:[a-f0-9]{1,2}){5}$/i.match(mac) then
       return true
     else
       return false
