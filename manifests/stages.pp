@@ -6,5 +6,7 @@ class stdlib::stages {
   stage { 'setup_packages': }
   stage { 'setup': }
 
-  Stage['setup_fs'] -> Stage['setup_mount'] -> Stage['setup_repo'] -> Stage['setup_packages'] -> Stage['setup'] -> Stage['main']
+  Stage['setup_fs'] -> Stage['setup_mount']
+  Stage['setup_repo'] -> Stage['setup_packages'] -> Stage['setup'] -> Stage['main']
+
 }
