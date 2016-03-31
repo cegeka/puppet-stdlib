@@ -24,7 +24,7 @@ if version[0] >= 3 or (version[0] == 2 and version[1] == 7 and version[2] >= 4)
       end
 
       if File.exist?(resourcefile)
-        File.read(resourcefile).each.inject(0) { |n, _| n + 1 }
+        File.readlines(resourcefile).each.inject(0) { |n, _| n + 1 }
       end
     end
   end
