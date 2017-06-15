@@ -43,7 +43,7 @@ Puppet::Type.type(:packagelock).provide(:yum) do
   def self.prefetch(resources)
     locks = instances
     resources.keys.each do |name|
-      if provider = locks.find { |lock| lock.name == name }
+      if provider = locks.find { |lock| lock.name.include?(name) }
         resources[name].provider = provider
       end
     end
@@ -85,6 +85,6 @@ Puppet::Type.type(:packagelock).provide(:yum) do
 
   def self.lock_to_pkg(lock)
     l = lock.chomp.gsub(/^[0-9]+:(.*)\.\*$/, '\1')
-    rpm('-q', '--qf', '%{NAME}', l)
+    rpm('-q', '--qf', '%{NAME}-%{VERSION}-%{RELEASE}', l)
   end
 end
