@@ -3,8 +3,8 @@ Puppet::Type.newtype(:packagelock) do
   desc <<-EOT
     Lock a package to the specific version installed. This resource
     type supplements the package resource type, to lock a package
-    to the version that is installed with the corresponding package
-    resource.
+    to the version that 'is installed/will be installed' with the 
+    corresponding package resource.
 
     **Autorequires:** If Puppet is managing the package with the same
     name as the packagelock name, the packagelock resource will
@@ -26,7 +26,7 @@ Puppet::Type.newtype(:packagelock) do
   end
 
   newparam(:name, :namevar => true) do
-    desc "The name of the software package to lock."
+    desc "The name of the software package to lock (must be a correct name). It should contain the version needed to be locked to if the package is not installed"
   end
 
   autorequire(:package) do
