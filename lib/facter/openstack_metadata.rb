@@ -32,13 +32,12 @@ if system('grep -q FEA9FEA9 /proc/net/route')
     openstack_hash = JSON.parse(open("http://169.254.169.254/openstack/latest/meta_data.json").read)
     openstack_metadata = openstack_hash['meta']
     if openstack_metadata.is_a?(Hash)
-    	openstack_metadata.each do |key,value|
-      	Facter.add(key) do
-        	has_weight 100
-        	setcode do
-          	value
-        	end
-      	end
+    openstack_metadata.each do |key,value|
+      Facter.add(key) do
+        has_weight 100
+        setcode do
+          value
+        end
       end
     end
   end
