@@ -6,7 +6,7 @@ if File.exist?(factsource)
             var = $1; val = $2
 
             Facter.add(var[/(\S+)/]) do
-                setcode { val[/(\S+)/] }
+                setcode { val[/(.*)/] }
             end
         end
     end
