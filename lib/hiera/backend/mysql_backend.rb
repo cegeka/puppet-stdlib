@@ -100,6 +100,7 @@ class Hiera
                       data << value
                   end
                 end
+                dbh.close
               return data
             end
         end
