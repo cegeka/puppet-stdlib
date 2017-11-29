@@ -19,6 +19,12 @@ Sorts strings and arrays lexically.
       value.sort
     elsif value.is_a?(String) then
       value.split("").sort.join("")
+    elsif value.is_a?(Hash) then
+      sorted_hash=Hash.new
+      value.keys.sort.each do |x|
+       sorted_hash[x]=value[x]
+      end
+      return sorted_hash
     end
 
   end
