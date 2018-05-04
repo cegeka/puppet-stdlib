@@ -33,7 +33,7 @@ Puppet::Parser::Functions::newfunction(
     raise ArgumentError, "pw_hash(): #{args[1]} is not a valid hash type" if hash_type.nil?
     raise ArgumentError, "pw_hash(): third argument must be a string" unless args[2].is_a? String
     raise ArgumentError, "pw_hash(): third argument must not be empty" if args[2].empty?
-    raise ArgumentError, "pw_hash(): characters in salt must be in the set [a-zA-Z0-9./]" unless args[2].match(/\A[a-zA-Z0-9.\/]+\z/)
+#    raise ArgumentError, "pw_hash(): characters in salt must be in the set [a-zA-Z0-9./]" unless args[2].match(/\A[a-zA-Z0-9.\/]+\z/)
 
     password = args[0]
     return nil if password.nil? or password.empty?
