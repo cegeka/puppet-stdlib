@@ -1,63 +1,63 @@
 #
 # fqdn_rotate.rb
 #
-
 Puppet::Parser::Functions.newfunction(
   :fqdn_rotate,
   :type => :rvalue,
-  :doc => "Usage: `fqdn_rotate(VALUE, [SEED])`. VALUE is required and
-  must be an array or a string. SEED is optional and may be any number
-  or string.
+  :doc => <<-DOC
+  @summary
+    Rotates an array or string a random number of times, combining the `$fqdn` fact
+    and an optional seed for repeatable randomness.
 
-  Rotates VALUE a random number of times, combining the `$fqdn` fact and
-  the value of SEED for repeatable randomness. (That is, each node will
-  get a different random rotation from this function, but a given node's
-  result will be the same every time unless its hostname changes.) Adding
-  a SEED can be useful if you need more than one unrelated rotation.") do |args|
+  @return
+    rotated array or string
 
-    raise(Puppet::ParseError, "fqdn_rotate(): Wrong number of arguments " +
-      "given (#{args.size} for 1)") if args.size < 1
+  @example Example Usage:
+    fqdn_rotate(['a', 'b', 'c', 'd'])
+    fqdn_rotate('abcd')
+    fqdn_rotate([1, 2, 3], 'custom seed')
+  DOC
+) do |args|
 
-    value = args.shift
-    require 'digest/md5'
+  raise(Puppet::ParseError, "fqdn_rotate(): Wrong number of arguments given (#{args.size} for 1)") if args.empty?
 
-    unless value.is_a?(Array) || value.is_a?(String)
-      raise(Puppet::ParseError, 'fqdn_rotate(): Requires either ' +
-        'array or string to work with')
-    end
+  value = args.shift
+  require 'digest/md5'
 
-    result = value.clone
+  unless value.is_a?(Array) || value.is_a?(String)
+    raise(Puppet::ParseError, 'fqdn_rotate(): Requires either array or string to work with')
+  end
 
-    string = value.is_a?(String) ? true : false
+  result = value.clone
 
-    # Check whether it makes sense to rotate ...
-    return result if result.size <= 1
+  string = value.is_a?(String) ? true : false
 
-    # We turn any string value into an array to be able to rotate ...
-    result = string ? result.split('') : result
+  # Check whether it makes sense to rotate ...
+  return result if result.size <= 1
 
-    elements = result.size
+  # We turn any string value into an array to be able to rotate ...
+  result = string ? result.split('') : result
 
-    seed = Digest::MD5.hexdigest([lookupvar('::fqdn'),args].join(':')).hex
-    # deterministic_rand() was added in Puppet 3.2.0; reimplement if necessary
-    if Puppet::Util.respond_to?(:deterministic_rand)
-      offset = Puppet::Util.deterministic_rand(seed, elements).to_i
-    else
-      if defined?(Random) == 'constant' && Random.class == Class
-        offset = Random.new(seed).rand(elements)
-      else
-        old_seed = srand(seed)
-        offset = rand(elements)
-        srand(old_seed)
-      end
-    end
-    offset.times {
-       result.push result.shift
-    }
+  elements = result.size
 
-    result = string ? result.join : result
+  seed = Digest::MD5.hexdigest([lookupvar('::fqdn'), args].join(':')).hex
+  # deterministic_rand() was added in Puppet 3.2.0; reimplement if necessary
+  if Puppet::Util.respond_to?(:deterministic_rand)
+    offset = Puppet::Util.deterministic_rand(seed, elements).to_i
+  else
+    return offset = Random.new(seed).rand(elements) if defined?(Random) == 'constant' && Random.class == Class
 
-    return result
+    old_seed = srand(seed)
+    offset = rand(elements)
+    srand(old_seed)
+  end
+  offset.times do
+    result.push result.shift
+  end
+
+  result = string ? result.join : result
+
+  return result
 end
 
 # vim: set ts=2 sw=2 et :

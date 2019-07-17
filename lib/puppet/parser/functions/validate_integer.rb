@@ -1,60 +1,69 @@
+#
+# validate_interger.rb
+#
 module Puppet::Parser::Functions
+  newfunction(:validate_integer, :doc => <<-DOC
+    @summary
+      Validate that the first argument is an integer (or an array of integers). Abort catalog compilation if any of the checks fail.
 
-  newfunction(:validate_integer, :doc => <<-'ENDHEREDOC') do |args|
-    Validate that the first argument is an integer (or an array of integers). Abort catalog compilation if any of the checks fail.
-    
     The second argument is optional and passes a maximum. (All elements of) the first argument has to be less or equal to this max.
-
     The third argument is optional and passes a minimum.  (All elements of) the first argument has to be greater or equal to this min.
     If, and only if, a minimum is given, the second argument may be an empty string or undef, which will be handled to just check
     if (all elements of) the first argument are greater or equal to the given minimum.
-
     It will fail if the first argument is not an integer or array of integers, and if arg 2 and arg 3 are not convertable to an integer.
 
-    The following values will pass:
+    @return
+      Validate that the first argument is an integer (or an array of integers). Fail compilation if any of the checks fail.
 
-      validate_integer(1)
-      validate_integer(1, 2)
-      validate_integer(1, 1)
-      validate_integer(1, 2, 0)
-      validate_integer(2, 2, 2)
-      validate_integer(2, '', 0)
-      validate_integer(2, undef, 0)
-      $foo = undef
-      validate_integer(2, $foo, 0)
-      validate_integer([1,2,3,4,5], 6)
-      validate_integer([1,2,3,4,5], 6, 0)
+    @example **Usage**
 
-    Plus all of the above, but any combination of values passed as strings ('1' or "1").
-    Plus all of the above, but with (correct) combinations of negative integer values.
+      The following values will pass:
 
-    The following values will not:
+        validate_integer(1)
+        validate_integer(1, 2)
+        validate_integer(1, 1)
+        validate_integer(1, 2, 0)
+        validate_integer(2, 2, 2)
+        validate_integer(2, '', 0)
+        validate_integer(2, undef, 0)
+        $foo = undef
+        validate_integer(2, $foo, 0)
+        validate_integer([1,2,3,4,5], 6)
+        validate_integer([1,2,3,4,5], 6, 0)
 
-      validate_integer(true)
-      validate_integer(false)
-      validate_integer(7.0)
-      validate_integer({ 1 => 2 })
-      $foo = undef
-      validate_integer($foo)
-      validate_integer($foobaridontexist)
+      Plus all of the above, but any combination of values passed as strings ('1' or "1").
+      Plus all of the above, but with (correct) combinations of negative integer values.
 
-      validate_integer(1, 0)
-      validate_integer(1, true)
-      validate_integer(1, '')
-      validate_integer(1, undef)
-      validate_integer(1, , 0)
-      validate_integer(1, 2, 3)
-      validate_integer(1, 3, 2)
-      validate_integer(1, 3, true)
+      The following values will not:
 
-    Plus all of the above, but any combination of values passed as strings ('false' or "false").
-    Plus all of the above, but with incorrect combinations of negative integer values.
-    Plus all of the above, but with non-integer items in arrays or maximum / minimum argument.
+        validate_integer(true)
+        validate_integer(false)
+        validate_integer(7.0)
+        validate_integer({ 1 => 2 })
+        $foo = undef
+        validate_integer($foo)
+        validate_integer($foobaridontexist)
 
-    ENDHEREDOC
+        validate_integer(1, 0)
+        validate_integer(1, true)
+        validate_integer(1, '')
+        validate_integer(1, undef)
+        validate_integer(1, , 0)
+        validate_integer(1, 2, 3)
+        validate_integer(1, 3, 2)
+        validate_integer(1, 3, true)
+
+      Plus all of the above, but any combination of values passed as strings ('false' or "false").
+      Plus all of the above, but with incorrect combinations of negative integer values.
+      Plus all of the above, but with non-integer items in arrays or maximum / minimum argument.
+
+    DOC
+             ) do |args|
+    function_deprecation([:validate_integer, 'This method is deprecated, please use the stdlib validate_legacy function,
+                            with Stdlib::Compat::Integer. There is further documentation for validate_legacy function in the README.'])
 
     # tell the user we need at least one, and optionally up to two other parameters
-    raise Puppet::ParseError, "validate_integer(): Wrong number of arguments; must be 1, 2 or 3, got #{args.length}" unless args.length > 0 and args.length < 4
+    raise Puppet::ParseError, "validate_integer(): Wrong number of arguments; must be 1, 2 or 3, got #{args.length}" unless !args.empty? && args.length < 4
 
     input, max, min = *args
 
@@ -62,7 +71,7 @@ module Puppet::Parser::Functions
     if args.length > 1
       max = max.to_s
       # allow max to be empty (or undefined) if we have a minimum set
-      if args.length > 2 and max == ''
+      if args.length > 2 && max == ''
         max = nil
       else
         begin
@@ -87,18 +96,18 @@ module Puppet::Parser::Functions
     end
 
     # ensure that min < max
-    if min and max and min > max
+    if min && max && min > max
       raise Puppet::ParseError, "validate_integer(): Expected second argument to be larger than third argument, got #{max} < #{min}"
     end
 
     # create lamba validator function
-    validator = lambda do |num|
+    validator = ->(num) do
       # check input < max
-      if max and num > max
+      if max && num > max
         raise Puppet::ParseError, "validate_integer(): Expected #{input.inspect} to be smaller or equal to #{max}, got #{input.inspect}."
       end
       # check input > min (this will only be checked if no exception has been raised before)
-      if min and num < min
+      if min && num < min
         raise Puppet::ParseError, "validate_integer(): Expected #{input.inspect} to be greater or equal to #{min}, got #{input.inspect}."
       end
     end

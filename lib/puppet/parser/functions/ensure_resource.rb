@@ -3,29 +3,35 @@ require 'puppet/parser/functions'
 
 Puppet::Parser::Functions.newfunction(:ensure_resource,
                                       :type => :statement,
-                                      :doc => <<-'ENDOFDOC'
-Takes a resource type, title, and a list of attributes that describe a
-resource.
+                                      :doc => <<-DOC
+  @summary
+    Takes a resource type, title, and a list of attributes that describe a
+    resource.
 
-    user { 'dan':
-      ensure => present,
-    }
+  user { 'dan':
+    ensure => present,
+  }
 
-This example only creates the resource if it does not already exist:
+  @return
+    created or recreated the passed resource with the passed type and attributes
 
-    ensure_resource('user', 'dan', {'ensure' => 'present' })
+  @example Example usage
 
-If the resource already exists but does not match the specified parameters,
-this function will attempt to recreate the resource leading to a duplicate
-resource definition error.
+    Creates the resource if it does not already exist:
 
-An array of resources can also be passed in and each will be created with
-the type and parameters specified if it doesn't already exist.
+      ensure_resource('user', 'dan', {'ensure' => 'present' })
 
-    ensure_resource('user', ['dan','alex'], {'ensure' => 'present'})
+    If the resource already exists but does not match the specified parameters,
+    this function will attempt to recreate the resource leading to a duplicate
+    resource definition error.
 
-ENDOFDOC
-) do |vals|
+    An array of resources can also be passed in and each will be created with
+    the type and parameters specified if it doesn't already exist.
+
+      ensure_resource('user', ['dan','alex'], {'ensure' => 'present'})
+
+DOC
+                                     ) do |vals|
   type, title, params = vals
   raise(ArgumentError, 'Must specify a type') unless type
   raise(ArgumentError, 'Must specify a title') unless title

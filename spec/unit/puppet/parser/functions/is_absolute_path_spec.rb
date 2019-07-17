@@ -1,44 +1,87 @@
-#! /usr/bin/env ruby -S rspec
 require 'spec_helper'
 
-describe "the is_absolute_path function" do
+describe 'is_absolute_path' do
   let(:scope) { PuppetlabsSpec::PuppetInternals.scope }
 
-  it "should exist" do
-    Puppet::Parser::Functions.function("is_absolute_path").should == "function_is_absolute_path"
+  let(:function_args) do
+    []
   end
 
-  it "should raise a ParseError if there is less than 1 argument" do
-    lambda { scope.function_is_absolute_path([]) }.should( raise_error(Puppet::ParseError))
+  let(:function) do
+    scope.function_is_absolute_path(function_args)
   end
 
-  it "should return true when an absolute path is passed" do
-    result = scope.function_is_absolute_path(["/tmp/foo"])
-    result.should(eq(true))
+  describe 'validate arity' do
+    let(:function_args) do
+      [1, 2]
+    end
+
+    it 'raises a ParseError if there is more than 1 arguments' do
+      -> { function }.should(raise_error(ArgumentError))
+    end
   end
 
-  it "should return false when a relative path is passed" do
-    result = scope.function_is_absolute_path(["tmp/foo"])
-    result.should(eq(false))
+  it 'exists' do
+    Puppet::Parser::Functions.function(subject).should == "function_#{subject}"
   end
 
-  it "should return false when an integer is passed" do
-    result = scope.function_is_absolute_path(["3"])
-    result.should(eq(false))
+  # help enforce good function defination
+  it 'contains arity' do
   end
 
-  it "should return false when an array is passed" do
-    result = scope.function_is_absolute_path([["a","b","c"]])
-    result.should(eq(false))
+  it 'raises a ParseError if there is less than 1 arguments' do
+    -> { function }.should(raise_error(ArgumentError))
   end
 
-  it "should return false when a hash is passed" do
-    result = scope.function_is_absolute_path([{:a=>"b",:c=>"d"}])
-    result.should(eq(false))
+  describe 'should retrun true' do
+    let(:return_value) do
+      true
+    end
+
+    describe 'windows' do
+      let(:function_args) do
+        ['c:\temp\test.txt']
+      end
+
+      it 'returns data' do
+        function.should eq(return_value)
+      end
+    end
+
+    describe 'non-windows' do
+      let(:function_args) do
+        ['/temp/test.txt']
+      end
+
+      it 'returns data' do
+        function.should eq(return_value)
+      end
+    end
   end
 
-  it "should return false when a boolean is passed" do
-    result = scope.function_is_absolute_path([true])
-    result.should(eq(false))
+  describe 'should return false' do
+    let(:return_value) do
+      false
+    end
+
+    describe 'windows' do
+      let(:function_args) do
+        ['..\temp\test.txt']
+      end
+
+      it 'returns data' do
+        function.should eq(return_value)
+      end
+    end
+
+    describe 'non-windows' do
+      let(:function_args) do
+        ['../var/lib/puppet']
+      end
+
+      it 'returns data' do
+        function.should eq(return_value)
+      end
+    end
   end
 end

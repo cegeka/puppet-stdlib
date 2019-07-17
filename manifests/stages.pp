@@ -1,16 +1,34 @@
+# @summary
+#   This class manages a standard set of run stages for Puppet. It is managed by
+#   the stdlib class, and should not be declared independently.
+#
+# Declares various run-stages for deploying infrastructure,
+# language runtimes, and application layers.
+# 
+# The high level stages are (in order):
+#  * setup
+#  * main
+#  * runtime
+#  * setup_infra
+#  * deploy_infra
+#  * setup_app
+#  * deploy_app
+#  * deploy
+#
+# @example
+#   node default {
+#     include ::stdlib
+#     class { java: stage => 'runtime' }
+#   }
+#
 class stdlib::stages {
 
-  stage { 'setup_fs': }
-  stage { 'setup_mount': }
-  stage { 'setup_directories': }
-  stage { 'setup_repo': }
-  stage { 'setup_packages': }
-  stage { 'setup_users': }
-  stage { 'setup': }
-
-  Stage['setup_fs'] -> Stage['setup_mount']
-  Stage['setup_users'] -> Stage['setup_directories']
-  Stage['setup_repo'] -> Stage['setup_packages']
-  Stage['setup'] -> Stage['main']
+  stage { 'setup':  before => Stage['main'] }
+  stage { 'runtime': require => Stage['main'] }
+  -> stage { 'setup_infra': }
+  -> stage { 'deploy_infra': }
+  -> stage { 'setup_app': }
+  -> stage { 'deploy_app': }
+  -> stage { 'deploy': }
 
 }
