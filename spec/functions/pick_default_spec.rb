@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'pick_default' do
-  it { is_expected.not_to eq(nil) }
+  it { is_expected.not_to be_nil }
   it { is_expected.to run.with_params.and_raise_error(RuntimeError, %r{Must receive at least one argument}) }
 
   it { is_expected.to run.with_params('one', 'two').and_return('one') }

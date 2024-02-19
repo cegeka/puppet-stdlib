@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'pick' do
-  it { is_expected.not_to eq(nil) }
+  it { is_expected.not_to be_nil }
   it { is_expected.to run.with_params.and_raise_error(Puppet::ParseError, %r{must receive at least one non empty value}) }
   it { is_expected.to run.with_params('', nil, :undef, :undefined).and_raise_error(Puppet::ParseError, %r{must receive at least one non empty value}) }
   it { is_expected.to run.with_params('one', 'two').and_return('one') }

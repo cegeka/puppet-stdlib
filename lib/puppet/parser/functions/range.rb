@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 #
 # range.rb
 #
 # TODO(Krzysztof Wilczynski): We probably need to approach numeric values differently ...
 module Puppet::Parser::Functions
-  newfunction(:range, :type => :rvalue, :doc => <<-DOC
+  newfunction(:range, type: :rvalue, doc: <<-DOC
     @summary
       When given range in the form of (start, stop) it will extrapolate a range as
       an array.
@@ -41,9 +43,8 @@ module Puppet::Parser::Functions
       the step() function in Puppet for skipping values.
 
      Integer[0, 9].each |$x| { notice($x) } # notices 0, 1, 2, ... 9
-    DOC
-             ) do |arguments|
-
+  DOC
+  ) do |arguments|
     raise(Puppet::ParseError, 'range(): Wrong number of arguments given (0 for 1)') if arguments.empty?
 
     if arguments.size > 1
@@ -51,19 +52,21 @@ module Puppet::Parser::Functions
       stop  = arguments[1]
       step  = arguments[2].nil? ? 1 : arguments[2].to_i.abs
 
+      raise(ArgumentError, 'range(): 3rd arg (step size) must be a non zero integer (e.g. 1 or -1)') if step.zero?
+
       type = '..' # Use the simplest type of Range available in Ruby
 
     else # arguments.size == 1
       value = arguments[0]
 
-      m = value.match(%r{^(\w+)(\.\.\.?|\-)(\w+)$})
+      m = value.match(%r{^(\w+)(\.\.\.?|-)(\w+)$})
       if m
         start = m[1]
         stop  = m[3]
 
         type = m[2]
         step = 1
-      elsif value =~ %r{^.+$}
+      elsif %r{^.+$}.match?(value)
         raise(Puppet::ParseError, "range(): Unable to compute range from the value: #{value}")
       else
         raise(Puppet::ParseError, "range(): Unknown range format: #{value}")
@@ -71,7 +74,7 @@ module Puppet::Parser::Functions
     end
 
     # If we were given an integer, ensure we work with one
-    if start.to_s =~ %r{^\d+$}
+    if %r{^\d+$}.match?(start.to_s)
       start = start.to_i
       stop  = stop.to_i
     else
@@ -84,7 +87,7 @@ module Puppet::Parser::Functions
             when '...' then (start...stop) # Exclusive of last element
             end
 
-    result = range.step(step).to_a
+    result = range.step(step).first(1_000_000).to_a
 
     return result
   end

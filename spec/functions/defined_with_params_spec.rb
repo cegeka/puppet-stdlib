@@ -1,9 +1,12 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'defined_with_params' do
   describe 'when no resource is specified' do
     it { is_expected.to run.with_params.and_raise_error(ArgumentError) }
   end
+
   describe 'when compared against a resource with no attributes' do
     let :pre_condition do
       'user { "dan": }'
@@ -50,6 +53,7 @@ describe 'defined_with_params' do
     context 'with reference' do
       it { is_expected.to run.with_params(Puppet::Resource.new('User[dan]'), {}).and_return(true) }
     end
+
     if Puppet::Util::Package.versioncmp(Puppet.version, '4.6.0') >= 0
       context 'with array' do
         it 'fails' do
@@ -63,13 +67,56 @@ describe 'defined_with_params' do
 
   describe 'when passed a defined type' do
     let :pre_condition do
-      'define test::deftype() { } test::deftype { "foo": }'
+      <<-PRECOND
+        define test::deftype(
+          Optional $port = undef
+        ) { }
+
+        test::deftype { "foo": }
+        test::deftype { "baz": port => 100 }
+        test::deftype { "adv": port => 200 }
+        test::deftype { "adv2": port => 200 }
+
+        # Unsure how to stub this out below properly
+        if defined_with_params(Test::Deftype, { 'port' => 200 }) {
+          notify { 'Duplicate found somewhere': }
+        }
+        if defined_with_params(Test::Deftype, { 'port' => 'nope' }) {
+          notify { 'Should not find me': }
+        }
+      PRECOND
     end
 
     it { is_expected.to run.with_params('Test::Deftype[foo]', {}).and_return(true) }
     it { is_expected.to run.with_params('Test::Deftype[bar]', {}).and_return(false) }
     it { is_expected.to run.with_params(Puppet::Resource.new('Test::Deftype[foo]'), {}).and_return(true) }
-    it { is_expected.to run.with_params(Puppet::Resource.new('Test::Deftype[bar]'), {}).and_return(false) }
+
+    it {
+      expect(subject).to run.with_params(Puppet::Resource.new('Test::Deftype[bar]'), {}).and_return(false)
+
+      expect(catalogue.resource('Notify[Duplicate found somewhere]')).not_to be_nil
+      expect(catalogue.resource('Notify[Should not find me]')).to be_nil
+    }
+  end
+
+  describe 'when called from within a defined type looking for a defined type of the same type' do
+    let :pre_condition do
+      <<-PRECOND
+        define test::deftype(
+          Optional $port = undef
+        ) {
+          if defined_with_params(Test::Deftype, { 'port' => $port }) {
+            fail('Ruh Roh Shaggy')
+          }
+        }
+
+        test::deftype { 'foo': }
+        test::deftype { 'bar': port => 200 }
+      PRECOND
+    end
+
+    # Testing to make sure that the internal logic handles this case via the pre_condition
+    it { is_expected.to run.with_params('NoOp[noop]', {}).and_return(false) }
   end
 
   describe 'when passed a class' do

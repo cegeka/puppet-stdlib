@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 #
 # grep.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:grep, :type => :rvalue, :doc => <<-DOC
+  newfunction(:grep, type: :rvalue, doc: <<-DOC
     @summary
       This function searches through an array and returns any elements that match
       the provided regular expression.
@@ -14,14 +16,11 @@ module Puppet::Parser::Functions
 
     > **Note:** that since Puppet 4.0.0, the built-in
     [`filter`](https://puppet.com/docs/puppet/latest/function.html#filter) function does
-    the "same" — as any logic can be used to filter, as opposed to just regular expressions:
+    the "same" - as any logic can be used to filter, as opposed to just regular expressions:
     ```['aaa', 'bbb', 'ccc', 'aaaddd']. filter |$x| { $x =~ 'aaa' }```
-    DOC
-             ) do |arguments|
-
-    if arguments.size != 2
-      raise(Puppet::ParseError, "grep(): Wrong number of arguments given #{arguments.size} for 2")
-    end
+  DOC
+  ) do |arguments|
+    raise(Puppet::ParseError, "grep(): Wrong number of arguments given #{arguments.size} for 2") if arguments.size != 2
 
     a = arguments[0]
     pattern = Regexp.new(arguments[1])

@@ -1,9 +1,9 @@
-# Validate the source parameter on file types
+# @summary Validate the source parameter on file types
 type Stdlib::Filesource = Variant[
   Stdlib::Absolutepath,
   Stdlib::HTTPUrl,
   Pattern[
-    /^file:\/\/\/([^\/\0]+(\/)?)+$/,
-    /^puppet:\/\/(([\w-]+\.?)+)?\/([^\/\0]+(\/)?)+$/,
+    /\Afile:\/\/\/([^\n\/\0]+(\/)?)+\z/,
+    /\Apuppet:\/\/(([\w-]+\.?)+)?\/([^\n\/\0]+(\/)?)+\z/,
   ],
 ]

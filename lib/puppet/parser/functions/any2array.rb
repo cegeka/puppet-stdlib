@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 #
 # any2array.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:any2array, :type => :rvalue, :doc => <<-DOC
+  newfunction(:any2array, type: :rvalue, doc: <<-DOC
     @summary
       This converts any object to an array containing that object.
 
@@ -33,15 +35,13 @@ module Puppet::Parser::Functions
 
     @return [Array] The new array containing the given object
   DOC
-             ) do |arguments|
-
-    if arguments.empty?
-      return []
-    end
+  ) do |arguments|
+    return [] if arguments.empty?
 
     return arguments unless arguments.length == 1
     return arguments[0] if arguments[0].is_a?(Array)
     return [] if arguments == ['']
+
     if arguments[0].is_a?(Hash)
       result = []
       arguments[0].each do |key, value|

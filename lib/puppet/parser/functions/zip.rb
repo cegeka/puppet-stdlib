@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 #
 # zip.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:zip, :type => :rvalue, :doc => <<-DOC
+  newfunction(:zip, type: :rvalue, doc: <<-DOC
     @summary
       Takes one element from first array and merges corresponding elements from second array.
 
@@ -12,18 +14,15 @@ module Puppet::Parser::Functions
     @example
       zip(['1','2','3'],['4','5','6'])
       Would result in: ["1", "4"], ["2", "5"], ["3", "6"]
-    DOC
-             ) do |arguments|
-
+  DOC
+  ) do |arguments|
     # Technically we support three arguments but only first is mandatory ...
     raise(Puppet::ParseError, "zip(): Wrong number of arguments given (#{arguments.size} for 2)") if arguments.size < 2
 
     a = arguments[0]
     b = arguments[1]
 
-    unless a.is_a?(Array) && b.is_a?(Array)
-      raise(Puppet::ParseError, 'zip(): Requires array to work with')
-    end
+    raise(Puppet::ParseError, 'zip(): Requires array to work with') unless a.is_a?(Array) && b.is_a?(Array)
 
     flatten = function_str2bool([arguments[2]]) if arguments[2]
 

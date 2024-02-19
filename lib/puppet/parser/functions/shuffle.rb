@@ -1,33 +1,32 @@
+# frozen_string_literal: true
+
 #
 # shuffle.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:shuffle, :type => :rvalue, :doc => <<-DOC
+  newfunction(:shuffle, type: :rvalue, doc: <<-DOC
   @summary
     Randomizes the order of a string or array elements.
 
    @return
      randomized string or array
   DOC
-             ) do |arguments|
-
+  ) do |arguments|
     raise(Puppet::ParseError, "shuffle(): Wrong number of arguments given (#{arguments.size} for 1)") if arguments.empty?
 
     value = arguments[0]
 
-    unless value.is_a?(Array) || value.is_a?(String)
-      raise(Puppet::ParseError, 'shuffle(): Requires either array or string to work with')
-    end
+    raise(Puppet::ParseError, 'shuffle(): Requires either array or string to work with') unless value.is_a?(Array) || value.is_a?(String)
 
     result = value.clone
 
-    string = value.is_a?(String) ? true : false
+    string = value.is_a?(String)
 
     # Check whether it makes sense to shuffle ...
     return result if result.size <= 1
 
     # We turn any string value into an array to be able to shuffle ...
-    result = string ? result.split('') : result
+    result = string ? result.chars : result
 
     elements = result.size
 

@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'clamp' do
-  it { is_expected.not_to eq(nil) }
+  it { is_expected.not_to be_nil }
   it { is_expected.to run.with_params.and_raise_error(ArgumentError, %r{Wrong number of arguments}) }
   it { is_expected.to run.with_params([]).and_raise_error(Puppet::ParseError, %r{Wrong number of arguments}) }
   it { is_expected.to run.with_params(12, 88, 71, 190).and_raise_error(Puppet::ParseError, %r{Wrong number of arguments, need three to clamp}) }

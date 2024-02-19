@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 #
 # any2bool.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:any2bool, :type => :rvalue, :doc => <<-DOC
+  newfunction(:any2bool, type: :rvalue, doc: <<-DOC
     @summary
       Converts 'anything' to a boolean.
 
@@ -19,37 +21,29 @@ module Puppet::Parser::Functions
 
     @return [Boolean] The boolean value of the object that was given
   DOC
-             ) do |arguments|
-
+  ) do |arguments|
     raise(Puppet::ParseError, "any2bool(): Wrong number of arguments given (#{arguments.size} for 1)") if arguments.empty?
 
     # If argument is already Boolean, return it
-    if !!arguments[0] == arguments[0] # rubocop:disable Style/DoubleNegation : Could not find a better way to check if a boolean
-      return arguments[0]
-    end
+    return arguments[0] if !!arguments[0] == arguments[0] # rubocop:disable Style/DoubleNegation : Could not find a better way to check if a boolean
 
     arg = arguments[0]
 
-    if arg.nil?
-      return false
-    end
+    return false if arg.nil?
 
-    if arg == :undef
-      return false
-    end
+    return false if arg == :undef
 
     valid_float = begin
-                    !!Float(arg) # rubocop:disable Style/DoubleNegation : Could not find a better way to check if a boolean
-                  rescue
-                    false
-                  end
-
-    if arg.is_a?(Numeric)
-      return function_num2bool([arguments[0]])
+      !!Float(arg) # rubocop:disable Style/DoubleNegation : Could not find a better way to check if a boolean
+    rescue StandardError
+      false
     end
+
+    return function_num2bool([arguments[0]]) if arg.is_a?(Numeric)
 
     if arg.is_a?(String)
       return function_num2bool([arguments[0]]) if valid_float
+
       return function_str2bool([arguments[0]])
     end
 

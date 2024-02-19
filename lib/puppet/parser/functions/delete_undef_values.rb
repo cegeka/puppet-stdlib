@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 #
 # delete_undef_values.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:delete_undef_values, :type => :rvalue, :doc => <<-DOC
+  newfunction(:delete_undef_values, type: :rvalue, doc: <<-DOC
     @summary
       Returns a copy of input hash or array with all undefs deleted.
 
@@ -22,14 +24,12 @@ module Puppet::Parser::Functions
     $hash.filter |$key, $val| { $val =~ NotUndef }
 
     @return [Array] The given array now issing of undefined values.
-    DOC
-             ) do |args|
-
+  DOC
+  ) do |args|
     raise(Puppet::ParseError, "delete_undef_values(): Wrong number of arguments given (#{args.size})") if args.empty?
 
-    unless args[0].is_a?(Array) || args[0].is_a?(Hash)
-      raise(Puppet::ParseError, "delete_undef_values(): expected an array or hash, got #{args[0]} type  #{args[0].class} ")
-    end
+    raise(Puppet::ParseError, "delete_undef_values(): expected an array or hash, got #{args[0]} type  #{args[0].class} ") unless args[0].is_a?(Array) || args[0].is_a?(Hash)
+
     result = args[0].dup
     if result.is_a?(Hash)
       result.delete_if { |_, val| val.equal?(:undef) || val.nil? }

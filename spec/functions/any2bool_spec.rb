@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'any2bool' do
-  it { is_expected.not_to eq(nil) }
+  it { is_expected.not_to be_nil }
   it { is_expected.to run.with_params.and_raise_error(Puppet::ParseError, %r{wrong number of arguments}i) }
 
   it { is_expected.to run.with_params(true).and_return(true) }
@@ -34,7 +36,7 @@ describe 'any2bool' do
   end
 
   describe 'everything else returns true' do
-    [[], {}, ['1'], [1], { :one => 1 }].each do |value|
+    [[], {}, ['1'], [1], { one: 1 }].each do |value|
       it { is_expected.to run.with_params(value).and_return(true) }
     end
   end

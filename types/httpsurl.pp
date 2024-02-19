@@ -1,1 +1,2 @@
-type Stdlib::HTTPSUrl = Pattern[/(?i:^https:\/\/)/]
+# @summary Validate a HTTPS URL
+type Stdlib::HTTPSUrl = Pattern[/(?i:\Ahttps:\/\/.*\z)/]

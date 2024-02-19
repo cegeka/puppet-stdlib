@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'get_module_path' do
-  it { is_expected.not_to eq(nil) }
+  it { is_expected.not_to be_nil }
   it { is_expected.to run.with_params.and_raise_error(Puppet::ParseError, %r{Wrong number of arguments, expects one}) }
   it { is_expected.to run.with_params('one', 'two').and_raise_error(Puppet::ParseError, %r{Wrong number of arguments, expects one}) }
   it { is_expected.to run.with_params('one', 'two', 'three').and_raise_error(Puppet::ParseError, %r{Wrong number of arguments, expects one}) }
@@ -10,6 +12,7 @@ describe 'get_module_path' do
   # class Stubmodule
   class StubModule
     attr_reader :path
+
     def initialize(path)
       @path = path
     end
@@ -27,14 +30,15 @@ describe 'get_module_path' do
       before(:each) do
         allow(Puppet::Module).to receive(:find).with('foo', 'rp_env').and_return(path_of_module_foo)
       end
+
       it 'runs against foo' do
-        is_expected.to run.with_params('foo').and_return(path_of_module_foo.path)
+        expect(subject).to run.with_params('foo').and_return(path_of_module_foo.path)
       end
 
       it 'when the modulepath is a list' do
-        Puppet[:modulepath] = modulepath + 'tmp/something_else'
+        Puppet[:modulepath] = "#{modulepath}tmp/something_else"
 
-        is_expected.to run.with_params('foo').and_return(path_of_module_foo.path)
+        expect(subject).to run.with_params('foo').and_return(path_of_module_foo.path)
       end
     end
 
@@ -44,13 +48,14 @@ describe 'get_module_path' do
       before(:each) do
         allow(Puppet::Module).to receive(:find).with('foo', 'test').and_return(path_of_module_foo)
       end
+
       it 'runs against foo' do
-        is_expected.to run.with_params('foo').and_return(path_of_module_foo.path)
+        expect(subject).to run.with_params('foo').and_return(path_of_module_foo.path)
       end
 
       it 'when the modulepath is a list' do
-        Puppet[:modulepath] = modulepath + 'tmp/something_else'
-        is_expected.to run.with_params('foo').and_return(path_of_module_foo.path)
+        Puppet[:modulepath] = "#{modulepath}tmp/something_else"
+        expect(subject).to run.with_params('foo').and_return(path_of_module_foo.path)
       end
     end
   end

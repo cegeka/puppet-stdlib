@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'stdlib::extname' do
-  it { is_expected.not_to eq(nil) }
+  it { is_expected.not_to be_nil }
   it { is_expected.to run.with_params.and_raise_error(ArgumentError, %r{'stdlib::extname' expects 1 argument, got none}) }
   it { is_expected.to run.with_params('one', 'two').and_raise_error(ArgumentError, %r{'stdlib::extname' expects 1 argument, got 2}) }
   it { is_expected.to run.with_params([]).and_raise_error(ArgumentError, %r{'stdlib::extname' parameter 'filename' expects a String value, got Array}) }

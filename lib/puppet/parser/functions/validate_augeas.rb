@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'tempfile'
 
 #
 # validate_augaes.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:validate_augeas, :doc => <<-DOC
+  newfunction(:validate_augeas, doc: <<-DOC
     @summary
       Perform validation of a string using an Augeas lens
 
@@ -39,15 +41,13 @@ module Puppet::Parser::Functions
 
         validate_augeas($sudoerscontent, 'Sudoers.lns', [], 'Failed to validate sudoers content with Augeas')
 
-    DOC
-             ) do |args|
+  DOC
+  ) do |args|
     unless Puppet.features.augeas?
       raise Puppet::ParseError, 'validate_augeas(): this function requires the augeas feature. See http://docs.puppetlabs.com/guides/augeas.html#pre-requisites for how to activate it.'
     end
 
-    if (args.length < 2) || (args.length > 4)
-      raise Puppet::ParseError, "validate_augeas(): wrong number of arguments (#{args.length}; must be 2, 3, or 4)"
-    end
+    raise Puppet::ParseError, "validate_augeas(): wrong number of arguments (#{args.length}; must be 2, 3, or 4)" if (args.length < 2) || (args.length > 4)
 
     msg = args[3] || "validate_augeas(): Failed to validate content against #{args[1].inspect}"
 
@@ -67,9 +67,9 @@ module Puppet::Parser::Functions
       # Check for syntax
       lens = args[1]
       aug.transform(
-        :lens => lens,
-        :name => 'Validate_augeas',
-        :incl => tmpfile.path,
+        lens: lens,
+        name: 'Validate_augeas',
+        incl: tmpfile.path,
       )
       aug.load!
 

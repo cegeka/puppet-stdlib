@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'getparam' do
-  it { is_expected.not_to eq(nil) }
+  it { is_expected.not_to be_nil }
   it { is_expected.to run.with_params.and_raise_error(ArgumentError, %r{Must specify a reference}) }
   it { is_expected.to run.with_params('User[one]').and_raise_error(ArgumentError, %r{Must specify name of a parameter}) }
   it { is_expected.to run.with_params('User[one]', 2).and_raise_error(ArgumentError, %r{Must specify name of a parameter}) }

@@ -10,6 +10,7 @@
     1. [Data Types](#data-types)
     1. [Facts](#facts)
 1. [Limitations](#limitations)
+1. [License](#license)
 1. [Development](#development)
 1. [Contributors](#contributors)
 
@@ -40,7 +41,7 @@ If you are authoring a module that depends on stdlib, be sure to [specify depend
 
 Most of stdlib's features are automatically loaded by Puppet. To use standardized run stages in Puppet, declare this class in your manifest with `include stdlib`.
 
-When declared, stdlib declares all other classes in the module. The only other class currently included in the module is `stdlib::stages`.
+When declared, stdlib declares all other classes in the module. This currently consists of `stdlib::manage` and `stdlib::stages`.
 
 The `stdlib::stages` class declares various run stages for deploying infrastructure, language runtimes, and application layers. The high level stages are (in order):
 
@@ -62,9 +63,24 @@ node default {
 }
 ```
 
+The `stdlib::manage` class provides an interface for generating trivial resource declarations via the `create_resources` parameter.  Depending on your usage, you may want to set `hiera`'s `lookup_options` for the `stdlib::manage::create_resources:` element.
+
+```yaml
+---
+stdlib::manage::create_resources:
+  file:
+    /etc/somefile:
+      ensure: file
+      owner: root
+      group: root
+  package:
+    badpackage:
+      ensure: absent
+```
+
 ## Reference
 
-For information on the classes and types, see the [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-stdlib/blob/master/REFERENCE.md).
+For information on the classes and types, see the [REFERENCE.md](https://github.com/puppetlabs/puppetlabs-stdlib/blob/main/REFERENCE.md).
 
 <a id="data-types"></a>
 ### Data types
@@ -392,7 +408,7 @@ Valid values: An IPv4 address.
 
 #### `Stdlib::IP::Address::V6`
 
-Match any string consistenting of an IPv6 address in any of the documented formats in RFC 2373, with or without an address prefix.
+Match any string consisting of an IPv6 address in any of the documented formats in RFC 2373, with or without an address prefix.
 
 Examples:
 
@@ -458,6 +474,55 @@ Match an IPv6 address which may contain `::` used to compress zeros as documente
 Match an IPv6 address in the CIDR format. It will only match if the address contains an address prefix (for example, it will match   'FF01:0:0:0:0:0:0:101/32', 'FF01::101/60', '::/0',
 but not 'FF01:0:0:0:0:0:0:101', 'FF01::101', '::').
 
+#### `Stdlib::ObjectStore`
+
+Matches cloud object store uris.
+
+Acceptable input example:
+
+```shell
+s3://mybucket/path/to/file
+
+gs://bucket/file
+
+```
+Valid values: cloud object store uris.
+
+
+#### `Stdlib::ObjectStore::GSUri`
+
+Matches Google Cloud object store uris.
+
+Acceptable input example:
+
+```shell
+
+gs://bucket/file
+
+gs://bucket/path/to/file
+
+```
+Valid values: Google Cloud object store uris.
+
+
+#### `Stdlib::ObjectStore::S3Uri`
+
+Matches Amazon Web Services S3 object store uris.
+
+Acceptable input example:
+
+```shell
+s3://bucket/file
+
+s3://bucket/path/to/file
+
+```
+Valid values: Amazon Web Services S3 object store uris.
+
+#### `Stdlib::Syslogfacility`
+
+An enum that defines all syslog facilities defined in [RFC5424](https://tools.ietf.org/html/rfc5424). This is based on work in the [voxpupuli/nrpe](https://github.com/voxpupuli/puppet-nrpe/commit/5700fd4f5bfc3e237195c8833039f9ed1045cd6b) module.
+
 <a id="facts"></a>
 ### Facts
 
@@ -495,7 +560,7 @@ Returns the value of the Puppet environment path settings for the node running P
 
 #### `puppet_server`
 
-Returns the Puppet agent's `server` value, which is the hostname of the Puppet master with which the agent should communicate.
+Returns the Puppet agent's `server` value, which is the hostname of the Puppet server with which the agent should communicate.
 
 #### `root_home`
 
@@ -511,14 +576,17 @@ Returns the default provider Puppet uses to manage services on this system
 
 As of Puppet Enterprise 3.7, the stdlib module is no longer included in PE. PE users should install the most recent release of stdlib for compatibility with Puppet modules.
 
-For an extensive list of supported operating systems, see [metadata.json](https://github.com/puppetlabs/puppetlabs-stdlib/blob/master/metadata.json)
+For an extensive list of supported operating systems, see [metadata.json](https://github.com/puppetlabs/puppetlabs-stdlib/blob/main/metadata.json)
+
+## License
+
+This codebase is licensed under the Apache2.0 licensing, however due to the nature of the codebase the open source dependencies may also use a combination of [AGPL](https://www.gnu.org/licenses/agpl-3.0.en.html), [BSD-2](https://opensource.org/license/bsd-2-claus), [BSD-3](https://opensource.org/license/bsd-3-claus), [GPL2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html), [LGPL](https://opensource.org/license/lgpl-3-0/), [MIT](https://opensource.org/license/mit/) and [MPL](https://opensource.org/license/mpl-2-0/) Licensing.
 
 ## Development
 
-Puppet modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can’t access the huge number of platforms and myriad hardware, software, and deployment configurations that Puppet is intended to serve. We want to keep it as easy as possible to contribute changes so that our modules work in your environment. There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things. For more information, see our [module contribution guide](https://github.com/puppetlabs/puppetlabs-stdlib/blob/master/CONTRIBUTING.md).
+Puppet modules on the Puppet Forge are open projects, and community contributions are essential for keeping them great. We can’t access the huge number of platforms and myriad hardware, software, and deployment configurations that Puppet is intended to serve. We want to keep it as easy as possible to contribute changes so that our modules work in your environment. There are a few guidelines that we need contributors to follow so that we can have a chance of keeping on top of things. For more information, see our [module contribution guide](https://github.com/puppetlabs/puppetlabs-stdlib/blob/main/CONTRIBUTING.md).
 
-To report or research a bug with any part of this module, please go to
-[http://tickets.puppetlabs.com/browse/MODULES](http://tickets.puppetlabs.com/browse/MODULES).
+To report or research a bug with any part of this module, please go to [https://github.com/puppetlabs/puppetlabs-stdlib/issues](https://github.com/puppetlabs/puppetlabs-stdlib/issues).
 
 ## Contributors
 

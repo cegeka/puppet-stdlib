@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 #
 # union.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:union, :type => :rvalue, :doc => <<-DOC
+  newfunction(:union, type: :rvalue, doc: <<-DOC
     @summary
       This function returns a union of two or more arrays.
 
@@ -12,9 +14,8 @@ module Puppet::Parser::Functions
 
       union(["a","b","c"],["b","c","d"])
       Would return: ["a","b","c","d"]
-    DOC
-             ) do |arguments|
-
+  DOC
+  ) do |arguments|
     # Check that 2 or more arguments have been given ...
     raise(Puppet::ParseError, "union(): Wrong number of arguments given (#{arguments.size} for < 2)") if arguments.size < 2
 

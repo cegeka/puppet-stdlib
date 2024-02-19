@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 #  Please note: This function is an implementation of a Ruby class and as such may not be entirely UTF8 compatible. To ensure compatibility please use this function with Ruby 2.4.0 or greater - https://bugs.ruby-lang.org/issues/10085.
 module Puppet::Parser::Functions
-  newfunction(:base64, :type => :rvalue, :doc => <<-DOC) do |args|
+  newfunction(:base64, type: :rvalue, doc: <<-DOC) do |args|
     @summary
       Base64 encode or decode a string based on the command and the string submitted
 
@@ -31,7 +33,7 @@ module Puppet::Parser::Functions
         function for reading a file with binary (non UTF-8) content.
 
     @return [String] The encoded/decoded value
-    DOC
+  DOC
 
     require 'base64'
 
@@ -39,13 +41,9 @@ module Puppet::Parser::Functions
 
     actions = ['encode', 'decode']
 
-    unless actions.include?(args[0])
-      raise Puppet::ParseError, "base64(): the first argument must be one of 'encode' or 'decode'"
-    end
+    raise Puppet::ParseError, "base64(): the first argument must be one of 'encode' or 'decode'" unless actions.include?(args[0])
 
-    unless args[1].is_a?(String)
-      raise Puppet::ParseError, 'base64(): the second argument must be a string to base64'
-    end
+    raise Puppet::ParseError, 'base64(): the second argument must be a string to base64' unless args[1].is_a?(String)
 
     method = ['default', 'strict', 'urlsafe']
 
@@ -55,9 +53,7 @@ module Puppet::Parser::Functions
                       args[2]
                     end
 
-    unless method.include?(chosen_method)
-      raise Puppet::ParseError, "base64(): the third argument must be one of 'default', 'strict', or 'urlsafe'"
-    end
+    raise Puppet::ParseError, "base64(): the third argument must be one of 'default', 'strict', or 'urlsafe'" unless method.include?(chosen_method)
 
     case args[0]
     when 'encode'

@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'bool2str' do
-  it { is_expected.not_to eq(nil) }
+  it { is_expected.not_to be_nil }
   it { is_expected.to run.with_params.and_raise_error(Puppet::ParseError) }
+
   ['true', 'false', nil, :undef, ''].each do |invalid|
     it { is_expected.to run.with_params(invalid).and_raise_error(Puppet::ParseError) }
   end

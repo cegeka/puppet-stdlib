@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe 'fqdn_rotate' do
-  it { is_expected.not_to eq(nil) }
-  it { is_expected.to run.with_params.and_raise_error(Puppet::ParseError, %r{wrong number of arguments}i) }
-  it { is_expected.to run.with_params(0).and_raise_error(Puppet::ParseError, %r{Requires either array or string to work with}) }
-  it { is_expected.to run.with_params({}).and_raise_error(Puppet::ParseError, %r{Requires either array or string to work with}) }
+  it { is_expected.not_to be_nil }
+  it { is_expected.to run.with_params.and_raise_error(ArgumentError, %r{expects at least 1 argument, got none}) }
+  it { is_expected.to run.with_params(0).and_raise_error(ArgumentError, %r{parameter 'input' expects a value of type String or Array, got Integer}) }
+  it { is_expected.to run.with_params({}).and_raise_error(ArgumentError, %r{parameter 'input' expects a value of type String or Array, got Hash}) }
   it { is_expected.to run.with_params('').and_return('') }
   it { is_expected.to run.with_params('a').and_return('a') }
   it { is_expected.to run.with_params('ã').and_return('ã') }
@@ -17,26 +19,26 @@ describe 'fqdn_rotate' do
   end
 
   it 'rotates a string to give the same results for one host' do
-    val1 = fqdn_rotate('abcdefg', :host => 'one')
-    val2 = fqdn_rotate('abcdefg', :host => 'one')
+    val1 = fqdn_rotate('abcdefg', host: 'one')
+    val2 = fqdn_rotate('abcdefg', host: 'one')
     expect(val1).to eq(val2)
   end
 
   it 'allows extra arguments to control the random rotation on a single host' do
-    val1 = fqdn_rotate('abcdefg', :extra_identifier => [1, 'different', 'host'])
-    val2 = fqdn_rotate('abcdefg', :extra_identifier => [2, 'different', 'host'])
+    val1 = fqdn_rotate('abcdefg', extra_identifier: [1, 'different', 'host'])
+    val2 = fqdn_rotate('abcdefg', extra_identifier: [2, 'different', 'host'])
     expect(val1).not_to eq(val2)
   end
 
   it 'considers the same host and same extra arguments to have the same random rotation' do
-    val1 = fqdn_rotate('abcdefg', :extra_identifier => [1, 'same', 'host'])
-    val2 = fqdn_rotate('abcdefg', :extra_identifier => [1, 'same', 'host'])
+    val1 = fqdn_rotate('abcdefg', extra_identifier: [1, 'same', 'host'])
+    val2 = fqdn_rotate('abcdefg', extra_identifier: [1, 'same', 'host'])
     expect(val1).to eq(val2)
   end
 
   it 'rotates a string to give different values on different hosts' do
-    val1 = fqdn_rotate('abcdefg', :host => 'one')
-    val2 = fqdn_rotate('abcdefg', :host => 'two')
+    val1 = fqdn_rotate('abcdefg', host: 'one')
+    val2 = fqdn_rotate('abcdefg', host: 'two')
     expect(val1).not_to eq(val2)
   end
 
@@ -46,8 +48,6 @@ describe 'fqdn_rotate' do
   end
 
   it 'uses the Puppet::Util.deterministic_rand function' do
-    skip 'Puppet::Util#deterministic_rand not available' unless Puppet::Util.respond_to?(:deterministic_rand)
-
     expect(Puppet::Util).to receive(:deterministic_rand).with(44_489_829_212_339_698_569_024_999_901_561_968_770, 4)
     fqdn_rotate('asdf')
   end
@@ -66,9 +66,9 @@ describe 'fqdn_rotate' do
 
     # workaround not being able to use let(:facts) because some tests need
     # multiple different hostnames in one context
-    allow(scope).to receive(:lookupvar).with('::fqdn').and_return(host)
+    allow(subject.func.closure_scope).to receive(:[]).with('facts').and_return({ 'networking' => { 'fqdn' => host } })
 
     function_args = [value] + extra
-    scope.function_fqdn_rotate(function_args)
+    scope.call_function('fqdn_rotate', function_args)
   end
 end

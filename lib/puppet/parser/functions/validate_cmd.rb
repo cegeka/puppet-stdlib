@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'puppet/util/execution'
 require 'tempfile'
 
@@ -5,7 +7,7 @@ require 'tempfile'
 # validate_cmd.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:validate_cmd, :doc => <<-DOC
+  newfunction(:validate_cmd, doc: <<-DOC
     @summary
       Perform validation of a string with an external command.
 
@@ -30,11 +32,9 @@ module Puppet::Parser::Functions
       % as file location
         validate_cmd($haproxycontent, '/usr/sbin/haproxy -f % -c', 'Haproxy failed to validate config content')
 
-    DOC
-             ) do |args|
-    if (args.length < 2) || (args.length > 3)
-      raise Puppet::ParseError, "validate_cmd(): wrong number of arguments (#{args.length}; must be 2 or 3)"
-    end
+  DOC
+  ) do |args|
+    raise Puppet::ParseError, "validate_cmd(): wrong number of arguments (#{args.length}; must be 2 or 3)" if (args.length < 2) || (args.length > 3)
 
     msg = args[2] || "validate_cmd(): failed to validate content with command #{args[1].inspect}"
 
@@ -47,22 +47,22 @@ module Puppet::Parser::Functions
       tmpfile.write(content)
       tmpfile.close
 
-      check_with_correct_location = if checkscript =~ %r{\s%(\s|$)}
+      check_with_correct_location = if %r{\s%(\s|$)}.match?(checkscript)
                                       checkscript.gsub(%r{%}, tmpfile.path)
                                     else
                                       "#{checkscript} #{tmpfile.path}"
                                     end
 
-      if Puppet::Util::Execution.respond_to?('execute')
+      if Puppet::Util::Execution.respond_to?(:execute)
         Puppet::Util::Execution.execute(check_with_correct_location)
       else
         Puppet::Util.execute(check_with_correct_location)
       end
-    rescue Puppet::ExecutionFailure => detail
-      msg += "\n#{detail}"
+    rescue Puppet::ExecutionFailure => e
+      msg += "\n#{e}"
       raise Puppet::ParseError, msg
-    rescue StandardError => detail
-      msg += "\n#{detail.class.name} #{detail}"
+    rescue StandardError => e
+      msg += "\n#{e.class.name} #{e}"
       raise Puppet::ParseError, msg
     ensure
       tmpfile.unlink

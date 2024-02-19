@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 #
 # enclose_ipv6.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:enclose_ipv6, :type => :rvalue, :doc => <<-DOC
+  newfunction(:enclose_ipv6, type: :rvalue, doc: <<-DOC
     @summary
       Takes an array of ip addresses and encloses the ipv6 addresses with square brackets.
 
@@ -10,21 +12,14 @@ module Puppet::Parser::Functions
       encloses the ipv6 addresses with square brackets.
 
   DOC
-             ) do |arguments|
-
+  ) do |arguments|
     require 'ipaddr'
 
     rescuable_exceptions = [ArgumentError]
-    if defined?(IPAddr::InvalidAddressError)
-      rescuable_exceptions << IPAddr::InvalidAddressError
-    end
+    rescuable_exceptions << IPAddr::InvalidAddressError if defined?(IPAddr::InvalidAddressError)
 
-    if arguments.size != 1
-      raise(Puppet::ParseError, "enclose_ipv6(): Wrong number of arguments given #{arguments.size} for 1")
-    end
-    unless arguments[0].is_a?(String) || arguments[0].is_a?(Array)
-      raise(Puppet::ParseError, "enclose_ipv6(): Wrong argument type given #{arguments[0].class} expected String or Array")
-    end
+    raise(Puppet::ParseError, "enclose_ipv6(): Wrong number of arguments given #{arguments.size} for 1") if arguments.size != 1
+    raise(Puppet::ParseError, "enclose_ipv6(): Wrong argument type given #{arguments[0].class} expected String or Array") unless arguments[0].is_a?(String) || arguments[0].is_a?(Array)
 
     input = [arguments[0]].flatten.compact
     result = []

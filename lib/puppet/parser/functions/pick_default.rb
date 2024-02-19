@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 #
 # pick_default.rb
 #
 module Puppet::Parser::Functions
-  newfunction(:pick_default, :type => :rvalue, :doc => <<-DOC
+  newfunction(:pick_default, type: :rvalue, doc: <<-DOC
     @summary
       This function will return the first value in a list of values that is not undefined or an empty string.
 
@@ -26,9 +28,10 @@ module Puppet::Parser::Functions
       Contrary to the pick() function, the pick_default does not fail if
       all arguments are empty. This allows pick_default to use an empty value as
       default.
-    DOC
-             ) do |args|
+  DOC
+  ) do |args|
     raise 'Must receive at least one argument.' if args.empty?
+
     default = args.last
     args = args[0..-2].compact
     args.delete(:undef)
